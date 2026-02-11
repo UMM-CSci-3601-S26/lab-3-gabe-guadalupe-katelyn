@@ -15,5 +15,5 @@ import { Todo } from './todo';
 export class TodoCardComponent {
 
   todo = input.required<Todo>();
-  simple = input(false);
+  //simple = input(false);
 }
