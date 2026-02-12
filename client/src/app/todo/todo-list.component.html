@@ -11,11 +11,11 @@
           <!-- Examples of filtering in Angular -->
 
           <mat-form-field class="input-field">
-            <mat-label>Name</mat-label>
+            <mat-label>Owner</mat-label>
             <!-- As opposed to the RXJS version `[ngModel]="todoName$ | async" (ngModelChange)="todoName$.next($event)" -->
             <!-- Signals are their own getter and setter if left uninvoked like that -->
             <!-- The [()] syntax is saying 'Do both the getting and setting with the respective get/set of the signal' -->
-            <input matInput data-test="todoNameInput" placeholder="Filter by name" [(ngModel)]="todoOwner">
+            <input matInput data-test="todoNameInput" placeholder="Filter by owner" [(ngModel)]="todoOwner">
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
         </div>
@@ -57,7 +57,7 @@
             <h3 mat-subheader>Todos</h3>
             @for (todo of filteredTodos(); track todo._id) {
             <a mat-list-item [routerLink]="['/todos', todo._id]" class="todo-list-item">
-              <span matListItemTitle mat-line class="todo-list-name"> {{todo.owner}} </span>
+              <span matListItemTitle mat-line class="todo-list-owner"> {{todo.owner}} </span>
             </a>
             }
           </mat-nav-list>

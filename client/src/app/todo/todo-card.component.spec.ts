@@ -31,4 +31,12 @@ describe('TodoCardComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should be associated with the correct todo', () => {
+    expect(component.todo()).toEqual(expectedTodo);
+  });
+
+  it('should be the todo with owner Blanche', () => {
+    expect(component.todo().owner).toEqual('Blanche');
+  });
 });
