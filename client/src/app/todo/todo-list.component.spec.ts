@@ -49,8 +49,17 @@ describe('Todo list', () => {
   it('should call getTodos() when todoOwner signal changes', () => {
     const spy = spyOn(todoService, 'getTodos').and.callThrough();
     todoList.todoOwner.set('Barry');
+    todoList.todoLimit.set(null);
     fixture.detectChanges();
-    expect(spy).toHaveBeenCalledWith({ owner: 'Barry' });
+    expect(spy).toHaveBeenCalledWith({ owner: 'Barry', limit: null });
+  });
+
+  it('should call getTodos() when todoLimit signal changes', () => {
+    const spy = spyOn(todoService, 'getTodos').and.callThrough();
+    todoList.todoLimit.set(5);
+    todoList.todoOwner.set(null);
+    fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith({ owner: null, limit: 5 });
   });
 
   it('should not show error message on successful load', () => {

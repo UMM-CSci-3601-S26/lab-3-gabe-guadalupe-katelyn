@@ -15,14 +15,18 @@ export class TodoService {
   readonly todoUrl: string = `${environment.apiUrl}todos`;
 
   private readonly ownerKey = 'owner';
+  private readonly limitKey = 'limit';
 
-  getTodos(filters?: {owner?: string;}): Observable<Todo[]> {
+  getTodos(filters?: {owner?: string; limit?: number}): Observable<Todo[]> {
 
     let httpParams: HttpParams = new HttpParams();
 
     if (filters) {
       if (filters.owner) {
         httpParams = httpParams.set(this.ownerKey, filters.owner);
+      }
+      if (filters.limit) {
+        httpParams = httpParams.set(this.limitKey, filters.limit);
       }
     }
 
