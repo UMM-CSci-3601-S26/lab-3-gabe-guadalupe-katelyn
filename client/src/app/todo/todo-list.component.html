@@ -15,8 +15,17 @@
             <!-- As opposed to the RXJS version `[ngModel]="todoName$ | async" (ngModelChange)="todoName$.next($event)" -->
             <!-- Signals are their own getter and setter if left uninvoked like that -->
             <!-- The [()] syntax is saying 'Do both the getting and setting with the respective get/set of the signal' -->
-            <input matInput data-test="todoNameInput" placeholder="Filter by owner" [(ngModel)]="todoOwner">
-            <mat-hint>Filtered on client</mat-hint>
+            <input matInput data-test="todoOwnerInput" placeholder="Filter by owner" [(ngModel)]="todoOwner">
+            <mat-hint>Filtered on server</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="input-field">
+            <mat-label>Limit</mat-label>
+            <!-- As opposed to the RXJS version `[ngModel]="todoName$ | async" (ngModelChange)="todoName$.next($event)" -->
+            <!-- Signals are their own getter and setter if left uninvoked like that -->
+            <!-- The [()] syntax is saying 'Do both the getting and setting with the respective get/set of the signal' -->
+            <input matInput data-test="todoLimitInput" placeholder="Limit todos returned" [(ngModel)]="todoLimit">
+            <mat-hint>Filtered on server</mat-hint>
           </mat-form-field>
         </div>
 

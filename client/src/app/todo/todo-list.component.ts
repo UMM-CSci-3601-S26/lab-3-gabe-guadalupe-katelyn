@@ -45,17 +45,20 @@ export class TodoComponent {
 
   todoOwner = signal<string | undefined>(undefined);
 
+  todoLimit = signal<number | undefined>(undefined);
+
   errMsg = signal<string | undefined>(undefined);
 
   viewType = signal<'card' | 'list'>('card');
 
   private todoOwner$ = toObservable(this.todoOwner);
+  private todoLimit$ = toObservable(this.todoLimit);
 
   serverFilteredTodos =
     toSignal(
-      combineLatest([this.todoOwner$]).pipe(
-        switchMap(([owner]) =>
-          this.todoService.getTodos({owner})
+      combineLatest([this.todoOwner$, this.todoLimit$]).pipe(
+        switchMap(([owner, limit]) =>
+          this.todoService.getTodos({owner, limit})
         ),
         catchError((err) => {
           if (!(err.error instanceof ErrorEvent)) {
