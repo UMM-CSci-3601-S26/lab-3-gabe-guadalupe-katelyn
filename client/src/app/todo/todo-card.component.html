@@ -1,0 +1,24 @@
+@if (todo()) {
+  <mat-card class="todo-card">
+    <mat-card-header>
+  <div class="todo-header">
+    <mat-icon class="status-icon" [ngClass]="todo().status ? 'green-icon' : 'red-icon'">
+      {{ todo().status ? 'check_circle_outline' : 'remove_circle_outline' }}
+    </mat-icon>
+
+    <div class="todo-card-category">
+      {{ todo().category }}
+    </div>
+  </div>
+</mat-card-header>
+
+    <mat-card-content>
+        <mat-list>
+            <mat-card-title class="todo-card-owner">{{ todo().owner }}</mat-card-title>
+            <div class="todo-card-body">
+              {{ todo().body }}
+            </div>
+        </mat-list>
+    </mat-card-content>
+  </mat-card>
+}

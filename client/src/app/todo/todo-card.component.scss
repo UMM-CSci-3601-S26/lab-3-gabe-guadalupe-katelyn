@@ -1,0 +1,29 @@
+// This sets the font size to be the same for both the Angular Material
+// list item title and list item line.
+
+.todo-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; // space between icon and category
+}
+
+.todo-card-body {
+  white-space: normal;
+  //color: lightgray;
+}
+
+// All caps and bold category
+.todo-card-category {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+// `!important` overrides Angulars defaults on icons
+// Colors for the task icons
+.green-icon {
+  color: rgb(35, 233, 35) !important;
+}
+
+.red-icon {
+  color: red !important;
+}
