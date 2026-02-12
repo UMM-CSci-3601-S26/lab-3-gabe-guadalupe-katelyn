@@ -1,22 +1,23 @@
 @if (todo()) {
   <mat-card class="todo-card">
     <mat-card-header>
-      <!-- @if (todo().avatar) {
-        <img mat-card-avatar [src]="todo().avatar" alt="Avatar for {{todo().name}}" class="todo-avatar">
-      } -->
-      <mat-card-title class="todo-card-owner">{{ todo().owner }}</mat-card-title>
-    </mat-card-header>
+  <div class="todo-header">
+    <mat-icon class="status-icon" [ngClass]="todo().status ? 'green-icon' : 'red-icon'">
+      {{ todo().status ? 'check_circle_outline' : 'remove_circle_outline' }}
+    </mat-icon>
+
+    <div class="todo-card-category">
+      {{ todo().category }}
+    </div>
+  </div>
+</mat-card-header>
+
     <mat-card-content>
         <mat-list>
-          <mat-list-item>
-            <mat-icon matListItemIcon>dataset</mat-icon>
-            <p matListItemTitle>Owner</p>
-            <!--
-            We had to put both the `role` and `age` entries on a single line. Otherwise
-            we got an annoying leading space in front of the values.
-            -->
-            <p matListItemLine class="todo-card-owner">{{ todo().owner }}</p>
-          </mat-list-item>
+            <mat-card-title class="todo-card-owner">{{ todo().owner }}</mat-card-title>
+            <div class="todo-card-body">
+              {{ todo().body }}
+            </div>
         </mat-list>
     </mat-card-content>
   </mat-card>
