@@ -44,21 +44,21 @@ export class TodoComponent {
   private snackBar = inject(MatSnackBar);
 
   todoOwner = signal<string | undefined>(undefined);
-
+  todoBody = signal<string | undefined>(undefined);
   todoLimit = signal<number | undefined>(undefined);
+
 
   errMsg = signal<string | undefined>(undefined);
 
   viewType = signal<'card' | 'list'>('card');
 
-  private todoOwner$ = toObservable(this.todoOwner);
   private todoLimit$ = toObservable(this.todoLimit);
 
   serverFilteredTodos =
     toSignal(
-      combineLatest([this.todoOwner$, this.todoLimit$]).pipe(
-        switchMap(([owner, limit]) =>
-          this.todoService.getTodos({owner, limit})
+      combineLatest([this.todoLimit$]).pipe(
+        switchMap(([ limit ]) =>
+          this.todoService.getTodos({ limit })
         ),
         catchError((err) => {
           if (!(err.error instanceof ErrorEvent)) {
@@ -79,7 +79,8 @@ export class TodoComponent {
   filteredTodos = computed(() => {
     const serverFilteredTodos = this.serverFilteredTodos();
     return this.todoService.filterTodos(serverFilteredTodos, {
-      owner: this.todoOwner()
+      owner: this.todoOwner(),
+      body: this.todoBody()
     });
   });
 }

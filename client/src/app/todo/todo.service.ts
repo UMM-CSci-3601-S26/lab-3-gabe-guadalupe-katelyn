@@ -14,17 +14,13 @@ export class TodoService {
 
   readonly todoUrl: string = `${environment.apiUrl}todos`;
 
-  private readonly ownerKey = 'owner';
   private readonly limitKey = 'limit';
 
-  getTodos(filters?: {owner?: string; limit?: number}): Observable<Todo[]> {
+  getTodos(filters?: { limit?: number;  }): Observable<Todo[]> {
 
     let httpParams: HttpParams = new HttpParams();
 
     if (filters) {
-      if (filters.owner) {
-        httpParams = httpParams.set(this.ownerKey, filters.owner);
-      }
       if (filters.limit) {
         httpParams = httpParams.set(this.limitKey, filters.limit);
       }
@@ -35,13 +31,19 @@ export class TodoService {
     });
   }
 
-  filterTodos(todos: Todo[], filters: { owner?: string; }): Todo[] { // skipcq: JS-0105
+  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; }): Todo[] { // skipcq: JS-0105
     let filteredTodos = todos;
 
-    // Filter by name
+    // Filter by owner
     if (filters.owner) {
       filters.owner = filters.owner.toLowerCase();
       filteredTodos = filteredTodos.filter(todo => todo.owner.toLowerCase().indexOf(filters.owner) !== -1);
+    }
+
+    // Filter by body
+    if (filters.body) {
+      filters.body = filters.body.toLowerCase();
+      filteredTodos = filteredTodos.filter(todo => todo.body.toLowerCase().indexOf(filters.body) !== -1);
     }
 
     return filteredTodos;
