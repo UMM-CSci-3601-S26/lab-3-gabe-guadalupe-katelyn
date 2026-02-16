@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TodoCardComponent } from './todo-card.component';
 
@@ -9,12 +9,14 @@ describe('TodoCardComponent', () => {
   let fixture: ComponentFixture<TodoCardComponent>;
   let expectedTodo: Todo;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [TodoCardComponent]
     })
       .compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(TodoCardComponent);
     component = fixture.componentInstance;
     expectedTodo = {
