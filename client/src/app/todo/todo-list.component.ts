@@ -17,10 +17,12 @@ import { Todo } from './todo';
 import { TodoCardComponent } from './todo-card.component';
 import { TodoService } from './todo.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @Component({
   selector: 'app-todo',
   imports: [
+    MatButtonToggleModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -47,7 +49,9 @@ export class TodoComponent {
   todoBody = signal<string | undefined>(undefined);
   todoCategory = signal<string | undefined>(undefined);
   todoLimit = signal<number | undefined>(undefined);
+  todoStatus = signal<boolean | undefined>(undefined);
 
+  todoLimit = signal<number | undefined>(undefined);
 
   errMsg = signal<string | undefined>(undefined);
 
@@ -82,7 +86,15 @@ export class TodoComponent {
     return this.todoService.filterTodos(serverFilteredTodos, {
       owner: this.todoOwner(),
       body: this.todoBody(),
-      category: this.todoCategory()
+      category: this.todoCategory(),
+      status: this.todoStatus()
     });
   });
+
+  setStatusFilter(value: 'all' | 'complete' | 'incomplete') {
+    if (value === 'complete') this.todoStatus.set(true);
+    else if (value === 'incomplete') this.todoStatus.set(false);
+    else this.todoStatus.set(undefined);
+  }
 }
+

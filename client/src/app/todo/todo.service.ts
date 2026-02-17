@@ -16,7 +16,7 @@ export class TodoService {
 
   private readonly limitKey = 'limit';
 
-  getTodos(filters?: { limit?: number;  }): Observable<Todo[]> {
+  getTodos(filters?: { limit?: number;}): Observable<Todo[]> {
 
     let httpParams: HttpParams = new HttpParams();
 
@@ -31,7 +31,7 @@ export class TodoService {
     });
   }
 
-  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; category?: string }): Todo[] { // skipcq: JS-0105
+  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; status?: boolean; category?: string}): Todo[] { // skipcq: JS-0105
     let filteredTodos = todos;
 
     // Filter by owner
@@ -50,6 +50,9 @@ export class TodoService {
     if (filters.category) {
       filters.category = filters.category.toLowerCase();
       filteredTodos = filteredTodos.filter(todo => todo.category.toLowerCase().indexOf(filters.category) !== -1);
+    // Filter by status
+    if (filters.status !== undefined) {
+      filteredTodos = filteredTodos.filter(todo => todo.status === filters.status);
     }
 
     return filteredTodos;
