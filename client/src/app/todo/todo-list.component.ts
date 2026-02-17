@@ -45,6 +45,7 @@ export class TodoComponent {
 
   todoOwner = signal<string | undefined>(undefined);
   todoBody = signal<string | undefined>(undefined);
+  todoCategory = signal<string | undefined>(undefined);
   todoLimit = signal<number | undefined>(undefined);
 
 
@@ -80,7 +81,8 @@ export class TodoComponent {
     const serverFilteredTodos = this.serverFilteredTodos();
     return this.todoService.filterTodos(serverFilteredTodos, {
       owner: this.todoOwner(),
-      body: this.todoBody()
+      body: this.todoBody(),
+      category: this.todoCategory()
     });
   });
 }

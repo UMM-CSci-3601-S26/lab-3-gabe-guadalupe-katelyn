@@ -31,7 +31,7 @@ export class TodoService {
     });
   }
 
-  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; }): Todo[] { // skipcq: JS-0105
+  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; category?: string }): Todo[] { // skipcq: JS-0105
     let filteredTodos = todos;
 
     // Filter by owner
@@ -44,6 +44,12 @@ export class TodoService {
     if (filters.body) {
       filters.body = filters.body.toLowerCase();
       filteredTodos = filteredTodos.filter(todo => todo.body.toLowerCase().indexOf(filters.body) !== -1);
+    }
+
+    // Filter by category
+    if (filters.category) {
+      filters.category = filters.category.toLowerCase();
+      filteredTodos = filteredTodos.filter(todo => todo.category.toLowerCase().indexOf(filters.category) !== -1);
     }
 
     return filteredTodos;
