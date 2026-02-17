@@ -50,6 +50,7 @@ export class TodoService {
     if (filters.category) {
       filters.category = filters.category.toLowerCase();
       filteredTodos = filteredTodos.filter(todo => todo.category.toLowerCase().indexOf(filters.category) !== -1);
+    }
     // Filter by status
     if (filters.status !== undefined) {
       filteredTodos = filteredTodos.filter(todo => todo.status === filters.status);
