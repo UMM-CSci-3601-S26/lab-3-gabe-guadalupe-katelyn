@@ -37,7 +37,6 @@ describe('Todo list', () => {
     );
   });
 
-
   // it('Should type something partial in the body filter and check that it returned correct elements', () => {
   //   // Filter for bodies that contain 'Nisi si'
   //   cy.get('[data-test=todoBodyInput]').type('Nisi si');
@@ -49,6 +48,41 @@ describe('Todo list', () => {
   //     cy.wrap(e).find('.todo-card-body').should('include.text', 'NISI SI');
   //   });
   // });
+
+  it('Should click complete filter and only show completed todos', () => {
+
+    cy.get('[data-test=statusComplete]').click();
+
+    page.getTodoCards().each(card => {
+      cy.wrap(card)
+        .find('.green-icon')
+        .should('exist');
+    });
+
+  });
+
+  it('Should click incomplete filter and only show incomplete todos', () => {
+
+    cy.get('[data-test=statusIncomplete]').click();
+
+    page.getTodoCards().each(card => {
+      cy.wrap(card)
+        .find('.red-icon')
+        .should('exist');
+    });
+
+  });
+
+  it('Should show all todos when all filter selected', () => {
+
+    cy.get('[data-test=statusComplete]').click();
+    cy.get('[data-test=statusAll]').click();
+
+    page.getTodoCards()
+      .its('length')
+      .should('be.greaterThan', 0);
+
+  });
 
   it('Should change the view', () => {
     // Choose the view type "List"
