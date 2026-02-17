@@ -14,15 +14,32 @@ export class TodoService {
 
   readonly todoUrl: string = `${environment.apiUrl}todos`;
 
-  private readonly limitKey = 'limit';
+  private readonly ownerKey = 'owner';
+  private readonly bodyKey = 'body';
+  private readonly catKey = 'category';
+  private readonly statusKey = 'status';
 
-  getTodos(filters?: { limit?: number;}): Observable<Todo[]> {
+  getTodos(filters?: {
+    owner?: string;
+    body?: string;
+    status?: boolean;
+    category?: string;
+  }): Observable<Todo[]> {
 
     let httpParams: HttpParams = new HttpParams();
 
     if (filters) {
-      if (filters.limit) {
-        httpParams = httpParams.set(this.limitKey, filters.limit);
+      if (filters.owner) {
+        httpParams = httpParams.set(this.ownerKey, filters.owner);
+      }
+      if (filters.body) {
+        httpParams = httpParams.set(this.bodyKey, filters.body);
+      }
+      if (filters.category) {
+        httpParams = httpParams.set(this.catKey, filters.category);
+      }
+      if (filters.status) {
+        httpParams = httpParams.set(this.statusKey, filters.status);
       }
     }
 
@@ -31,29 +48,13 @@ export class TodoService {
     });
   }
 
-  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; status?: boolean; category?: string}): Todo[] { // skipcq: JS-0105
+  filterTodos(todos: Todo[], filters: {
+    limit?: number;
+  }): Todo[] {
     let filteredTodos = todos;
 
-    // Filter by owner
-    if (filters.owner) {
-      filters.owner = filters.owner.toLowerCase();
-      filteredTodos = filteredTodos.filter(todo => todo.owner.toLowerCase().indexOf(filters.owner) !== -1);
-    }
-
-    // Filter by body
-    if (filters.body) {
-      filters.body = filters.body.toLowerCase();
-      filteredTodos = filteredTodos.filter(todo => todo.body.toLowerCase().indexOf(filters.body) !== -1);
-    }
-
-    // Filter by category
-    if (filters.category) {
-      filters.category = filters.category.toLowerCase();
-      filteredTodos = filteredTodos.filter(todo => todo.category.toLowerCase().indexOf(filters.category) !== -1);
-    }
-    // Filter by status
-    if (filters.status !== undefined) {
-      filteredTodos = filteredTodos.filter(todo => todo.status === filters.status);
+    if (filters.limit !== undefined) {
+      filteredTodos = filteredTodos.slice(0, filters.limit);
     }
 
     return filteredTodos;

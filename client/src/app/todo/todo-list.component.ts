@@ -56,14 +56,28 @@ export class TodoComponent {
 
   viewType = signal<'card' | 'list'>('card');
 
-  private todoLimit$ = toObservable(this.todoLimit);
+  private todoOwner$ = toObservable(this.todoOwner);
+  private todoBody$ = toObservable(this.todoBody);
+  private todoCategory$ = toObservable(this.todoCategory);
+  private todoStatus$ = toObservable(this.todoStatus);
 
   serverFilteredTodos =
     toSignal(
-      combineLatest([this.todoLimit$]).pipe(
-        switchMap(([ limit ]) =>
-          this.todoService.getTodos({ limit })
+      combineLatest([
+        this.todoOwner$,
+        this.todoBody$,
+        this.todoCategory$,
+        this.todoStatus$
+      ]).pipe(
+        switchMap(([owner, body, category, status]) =>
+          this.todoService.getTodos({
+            owner,
+            body,
+            category,
+            status
+          })
         ),
+
         catchError((err) => {
           if (!(err.error instanceof ErrorEvent)) {
             this.errMsg.set(
@@ -71,11 +85,10 @@ export class TodoComponent {
             );
           }
           this.snackBar.open(this.errMsg(), 'OK', { duration: 6000 });
-          // `catchError` needs to return the same type. `of` makes an observable of the same type, and makes the array still empty
           return of<Todo[]>([]);
         }),
         tap(() => {
-
+          // empty
         })
       )
     );
@@ -83,17 +96,18 @@ export class TodoComponent {
   filteredTodos = computed(() => {
     const serverFilteredTodos = this.serverFilteredTodos();
     return this.todoService.filterTodos(serverFilteredTodos, {
-      owner: this.todoOwner(),
-      body: this.todoBody(),
-      category: this.todoCategory(),
-      status: this.todoStatus()
+      limit: this.todoLimit()
     });
   });
 
-  setStatusFilter(value: 'all' | 'complete' | 'incomplete') {
-    if (value === 'complete') this.todoStatus.set(true);
-    else if (value === 'incomplete') this.todoStatus.set(false);
-    else this.todoStatus.set(undefined);
+  setStatusFilter(value: string) {
+    if (value === 'complete') {
+      this.todoStatus.set(true);
+    } else if (value === 'incomplete') {
+      this.todoStatus.set(false);
+    } else {
+      this.todoStatus.set(undefined);
+    }
   }
 }
 
