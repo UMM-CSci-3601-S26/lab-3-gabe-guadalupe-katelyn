@@ -47,6 +47,7 @@ export class TodoComponent {
 
   todoOwner = signal<string | undefined>(undefined);
   todoBody = signal<string | undefined>(undefined);
+  todoCategory = signal<string | undefined>(undefined);
   todoStatus = signal<boolean | undefined>(undefined);
 
   todoLimit = signal<number | undefined>(undefined);
@@ -84,6 +85,7 @@ export class TodoComponent {
     return this.todoService.filterTodos(serverFilteredTodos, {
       owner: this.todoOwner(),
       body: this.todoBody(),
+      category: this.todoCategory(),
       status: this.todoStatus()
     });
   });

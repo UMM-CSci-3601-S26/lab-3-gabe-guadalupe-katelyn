@@ -162,5 +162,14 @@ describe('TodoService', () => {
         expect(todo.body.indexOf(todoBody)).toBeGreaterThanOrEqual(0);
       });
     });
+
+    it('filters by category', () => {
+      const todoCategory = 'homework';
+      const filteredTodos = todoService.filterTodos(testTodos, { category: todoCategory });
+      expect(filteredTodos.length).toBe(1);
+      filteredTodos.forEach(todo => {
+        expect(todo.category.indexOf(todoCategory)).toBeGreaterThanOrEqual(0);
+      });
+    });
   });
 });
