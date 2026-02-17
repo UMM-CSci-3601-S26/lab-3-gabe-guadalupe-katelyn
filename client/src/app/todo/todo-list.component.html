@@ -33,25 +33,26 @@
             </mat-select>
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
+
           <mat-button-toggle-group
-            data-test="statusToggleGroup"
-            (change)="setStatusFilter($event.value)">
+              data-test="statusToggleGroup"
+              (change)="setStatusFilter($event.value)">
 
-            <mat-button-toggle value="all" data-test="statusAll">
-              All
-            </mat-button-toggle>
+              <mat-button-toggle value="all" data-test="statusAll">
+                All
+              </mat-button-toggle>
 
-            <mat-button-toggle value="complete">
-              <mat-icon class="green-icon">check_circle_outline</mat-icon>
-              Complete
-            </mat-button-toggle>
+              <mat-button-toggle value="complete" data-test="statusComplete">
+                <mat-icon class="green-icon">check_circle_outline</mat-icon>
+                Complete
+              </mat-button-toggle>
 
-            <mat-button-toggle value="incomplete">
-              <mat-icon class="red-icon">remove_circle_outline</mat-icon>
-              Incomplete
-            </mat-button-toggle>
+              <mat-button-toggle value="incomplete" data-test="statusIncomplete">
+                <mat-icon class="red-icon">remove_circle_outline</mat-icon>
+                Incomplete
+              </mat-button-toggle>
 
-          </mat-button-toggle-group>
+            </mat-button-toggle-group>
 
 
 
