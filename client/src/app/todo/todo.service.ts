@@ -15,14 +15,10 @@ export class TodoService {
   readonly todoUrl: string = `${environment.apiUrl}todos`;
 
   private readonly ownerKey = 'owner';
-  private readonly bodyKey = 'body';
   private readonly catKey = 'category';
-  private readonly statusKey = 'status';
 
   getTodos(filters?: {
     owner?: string;
-    body?: string;
-    status?: boolean;
     category?: string;
   }): Observable<Todo[]> {
 
@@ -32,14 +28,8 @@ export class TodoService {
       if (filters.owner) {
         httpParams = httpParams.set(this.ownerKey, filters.owner);
       }
-      if (filters.body) {
-        httpParams = httpParams.set(this.bodyKey, filters.body);
-      }
       if (filters.category) {
         httpParams = httpParams.set(this.catKey, filters.category);
-      }
-      if (filters.status) {
-        httpParams = httpParams.set(this.statusKey, filters.status);
       }
     }
 
@@ -50,10 +40,24 @@ export class TodoService {
 
   filterTodos(todos: Todo[], filters: {
     limit?: number;
+    body?: string;
+    status?: boolean;
   }): Todo[] {
     let filteredTodos = todos;
 
-    if (filters.limit !== undefined) {
+    // Filter by body
+    if (filters.body) {
+      filters.body = filters.body.toLowerCase();
+      filteredTodos = filteredTodos.filter(todo => todo.body.toLowerCase().indexOf(filters.body) !== -1);
+    }
+
+    // Filter by status
+    if (filters.status !== undefined) {
+      filteredTodos = filteredTodos.filter(todo => todo.status === filters.status);
+    }
+
+    // Filter by limit
+    if (filters.limit != null) {
       filteredTodos = filteredTodos.slice(0, filters.limit);
     }
 

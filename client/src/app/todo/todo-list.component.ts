@@ -57,24 +57,18 @@ export class TodoComponent {
   viewType = signal<'card' | 'list'>('card');
 
   private todoOwner$ = toObservable(this.todoOwner);
-  private todoBody$ = toObservable(this.todoBody);
   private todoCategory$ = toObservable(this.todoCategory);
-  private todoStatus$ = toObservable(this.todoStatus);
 
   serverFilteredTodos =
     toSignal(
       combineLatest([
         this.todoOwner$,
-        this.todoBody$,
         this.todoCategory$,
-        this.todoStatus$
       ]).pipe(
-        switchMap(([owner, body, category, status]) =>
+        switchMap(([owner, category]) =>
           this.todoService.getTodos({
             owner,
-            body,
-            category,
-            status
+            category
           })
         ),
 
@@ -96,18 +90,15 @@ export class TodoComponent {
   filteredTodos = computed(() => {
     const serverFilteredTodos = this.serverFilteredTodos();
     return this.todoService.filterTodos(serverFilteredTodos, {
+      body: this.todoBody(),
+      status: this.todoStatus(),
       limit: this.todoLimit()
     });
   });
 
-  setStatusFilter(value: string) {
-    if (value === 'complete') {
-      this.todoStatus.set(true);
-    } else if (value === 'incomplete') {
-      this.todoStatus.set(false);
-    } else {
-      this.todoStatus.set(undefined);
-    }
+  setStatusFilter(value: 'all' | 'complete' | 'incomplete') {
+    if (value === 'complete') this.todoStatus.set(true);
+    else if (value === 'incomplete') this.todoStatus.set(false);
+    else this.todoStatus.set(undefined);
   }
 }
-
