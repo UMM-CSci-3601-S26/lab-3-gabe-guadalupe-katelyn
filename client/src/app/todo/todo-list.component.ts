@@ -54,8 +54,6 @@ export class TodoComponent {
 
   errMsg = signal<string | undefined>(undefined);
 
-  viewType = signal<'card' | 'list'>('card');
-
   private todoOwner$ = toObservable(this.todoOwner);
   private todoCategory$ = toObservable(this.todoCategory);
 
@@ -100,5 +98,13 @@ export class TodoComponent {
     if (value === 'complete') this.todoStatus.set(true);
     else if (value === 'incomplete') this.todoStatus.set(false);
     else this.todoStatus.set(undefined);
+  }
+
+  resetFilters() {
+    this.todoOwner.set(undefined);
+    this.todoBody.set(undefined);
+    this.todoCategory.set(undefined);
+    this.todoStatus.set(undefined);
+    this.todoLimit.set(undefined);
   }
 }
