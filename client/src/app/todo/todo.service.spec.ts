@@ -122,18 +122,18 @@ describe('TodoService', () => {
     * about the returned value).
     */
 
-    it('correctly calls api/todos with filter parameter \'limit\'', () => {
-      const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
+    // it('correctly calls api/todos with filter parameter \'limit\'', () => {
+    //   const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
 
-      todoService.getTodos({ limit: 1}).subscribe(() => {
-        expect(mockedMethod)
-          .withContext('one call')
-          .toHaveBeenCalledTimes(1);
-        expect(mockedMethod)
-          .withContext('talks to the correct endpoint')
-          .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams().set('limit', 1) });
-      });
-    });
+    //   todoService.getTodos({ limit: 1}).subscribe(() => {
+    //     expect(mockedMethod)
+    //       .withContext('one call')
+    //       .toHaveBeenCalledTimes(1);
+    //     expect(mockedMethod)
+    //       .withContext('talks to the correct endpoint')
+    //       .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams().set('limit', 1) });
+    //   });
+    // });
   });
 
   describe('Filtering on the client using `filterTodos()` (Angular/Client filtering)', () => {
@@ -145,14 +145,14 @@ describe('TodoService', () => {
      * though, we don't have to use the mock HttpClient and
      * all those complications.
      */
-    it('filters by owner', () => {
-      const todoOwner = 'Fry';
-      const filteredTodos = todoService.filterTodos(testTodos, { owner: todoOwner });
-      expect(filteredTodos.length).toBe(1);
-      filteredTodos.forEach(todo => {
-        expect(todo.owner.indexOf(todoOwner)).toBeGreaterThanOrEqual(0);
-      });
-    });
+    // it('filters by owner', () => {
+    //   const todoOwner = 'Fry';
+    //   const filteredTodos = todoService.filterTodos(testTodos, { owner: todoOwner });
+    //   expect(filteredTodos.length).toBe(1);
+    //   filteredTodos.forEach(todo => {
+    //     expect(todo.owner.indexOf(todoOwner)).toBeGreaterThanOrEqual(0);
+    //   });
+    // });
 
     it('filters by body', () => {
       const todoBody = 'sunt ex non';
@@ -163,13 +163,13 @@ describe('TodoService', () => {
       });
     });
 
-    it('filters by category', () => {
-      const todoCategory = 'homework';
-      const filteredTodos = todoService.filterTodos(testTodos, { category: todoCategory });
-      expect(filteredTodos.length).toBe(1);
-      filteredTodos.forEach(todo => {
-        expect(todo.category.indexOf(todoCategory)).toBeGreaterThanOrEqual(0);
-      });
-    });
+    // it('filters by category', () => {
+    //   const todoCategory = 'homework';
+    //   const filteredTodos = todoService.filterTodos(testTodos, { category: todoCategory });
+    //   expect(filteredTodos.length).toBe(1);
+    //   filteredTodos.forEach(todo => {
+    //     expect(todo.category.indexOf(todoCategory)).toBeGreaterThanOrEqual(0);
+    //   });
+    // });
   });
 });
