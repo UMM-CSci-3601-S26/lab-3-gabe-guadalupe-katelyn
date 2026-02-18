@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { MockTodoService } from 'src/testing/todo.service.mock';
 import { Todo } from './todo';
 import { TodoCardComponent } from './todo-card.component';
@@ -46,12 +46,21 @@ describe('Todo list', () => {
     expect(Array.isArray(todos)).toBe(true);
   });
 
-  it('should call getTodos() when todoLimit signal changes', () => {
-    const spy = spyOn(todoService, 'getTodos').and.callThrough();
-    todoList.todoLimit.set(5);
+  it('should apply limit client-side when todoLimit changes', waitForAsync(() => {
+    const mockTodos = [
+      { owner: 'A', status: true, body: 'todo 1', category: 'cat1', _id: '1' },
+      { owner: 'B', status: false, body: 'todo 2', category: 'cat2', _id: '2' },
+      { owner: 'C', status: true, body: 'todo 3', category: 'cat3', _id: '3' },
+    ];
+
+    spyOn(todoService, 'getTodos').and.returnValue(of(mockTodos));
+    todoList.todoOwner.set('A');
     fixture.detectChanges();
-    expect(spy).toHaveBeenCalledWith({ limit: 5 });
-  });
+    todoList.todoLimit.set(2);
+    fixture.detectChanges();
+
+    expect(todoList.filteredTodos().length).toBe(2);
+  }));
 
   it('should not show error message on successful load', () => {
     expect(todoList.errMsg()).toBeUndefined();
