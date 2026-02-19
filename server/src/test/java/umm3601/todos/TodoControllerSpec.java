@@ -1,20 +1,26 @@
 package umm3601.todos;
 
+import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+// import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 // import static org.mockito.ArgumentMatchers.any;
 // import static org.mockito.ArgumentMatchers.argThat;
-// import static org.mockito.ArgumentMatchers.any;
 // import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+// import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+// import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+// import java.util.stream.Collectors;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -23,11 +29,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+// import org.mockito.ArgumentMatcher;
 import org.mockito.Captor;
 import org.mockito.Mock;
 // import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+// import com.fasterxml.jackson.core.JsonProcessingException;
+// import com.fasterxml.jackson.databind.JsonMappingException;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
@@ -35,15 +44,20 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
-import io.javalin.http.BadRequestResponse;
 // import io.javalin.Javalin;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
-// import io.javalin.json.JavalinJackson;
+import io.javalin.json.JavalinJackson;
+import io.javalin.validation.BodyValidator;
+// import io.javalin.validation.Validation;
+import io.javalin.validation.ValidationError;
+import io.javalin.validation.ValidationException;
+// import io.javalin.validation.Validator;
+
 import umm3601.todo.Todo;
 import umm3601.todo.TodoController;
-
 
 @SuppressWarnings({ "MagicNumber" })
 public class TodoControllerSpec {
@@ -54,6 +68,8 @@ public class TodoControllerSpec {
 
   private static MongoClient mongoClient;
   private static MongoDatabase db;
+
+  private static JavalinJackson javalinJackson = new JavalinJackson();
 
   @Mock
   private Context ctx;
@@ -356,4 +372,203 @@ public class TodoControllerSpec {
     assertEquals("Chris", chris.owner);
     assertEquals(true, chris.status);
   }
+
+@Test
+void addTodo() throws IOException {
+  Todo newTodo = new Todo();
+  newTodo.owner = "Alice";
+  newTodo.status = false;
+  newTodo.body = "This is a new todo.";
+  newTodo.category = "General";
+
+  String newTodoJson = javalinJackson.toJsonString(newTodo, Todo.class);
+  when(ctx.bodyValidator(Todo.class))
+      .thenReturn(new BodyValidator<Todo>(newTodoJson, Todo.class,
+                    () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    todoController.addNewTodo(ctx);
+    verify(ctx).json(mapCaptor.capture());
+
+    verify(ctx).status(HttpStatus.CREATED);
+
+    Document addedTodo = db.getCollection("todos")
+        .find(eq("_id", new ObjectId(mapCaptor.getValue().get("id")))).first();
+
+    assertNotEquals("", addedTodo.get("_id"));
+    assertEquals(newTodo.owner, addedTodo.get("owner"));
+    assertEquals(newTodo.category, addedTodo.get("category"));
+    assertEquals(newTodo.status, addedTodo.get("status"));
+    assertEquals(newTodo.body, addedTodo.get("body"));
+  }
+
+  @Test
+  void addTodoWithoutOwner() throws IOException {
+    String newTodoJson = """
+        {
+          "category": "General",
+          "status": true,
+          "body": "This is a test todo."
+        }
+        """;
+
+    when(ctx.body()).thenReturn(newTodoJson);
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(newTodoJson, Todo.class,
+                        () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+    String exceptionMessage = exception.getErrors().get("REQUEST_BODY").get(0).toString();
+    assertTrue(exceptionMessage.contains("non-empty todo owner"));
+  }
+
+  @Test
+  void addEmptyOwnerTodo() throws IOException {
+    String newTodoJson = """
+        {
+          "owner": "",
+          "category": "General",
+          "status": true,
+          "body": "This is a test todo."
+        }
+        """;
+
+    when(ctx.body()).thenReturn(newTodoJson);
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(newTodoJson, Todo.class,
+                        () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+    String exceptionMessage = exception.getErrors().get("REQUEST_BODY").get(0).toString();
+    assertTrue(exceptionMessage.contains("non-empty todo owner"));
+  }
+
+  @Test
+  void addTodoWithoutCategory() throws IOException {
+    String newTodoJson = """
+        {
+          "owner": "Test Todo",
+          "status": true,
+          "body": "This is a test todo."
+        }
+        """;
+
+    when(ctx.body()).thenReturn(newTodoJson);
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(newTodoJson, Todo.class,
+                        () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+
+    String exceptionMessage = exception.getErrors().get("REQUEST_BODY").get(0).toString();
+
+    assertTrue(exceptionMessage.contains("non-empty todo category"));
+  }
+
+  @Test
+  void addEmptyCategoryTodo() throws IOException {
+    String newTodoJson = """
+        {
+          "owner": "Juan",
+          "status": true,
+          "category": "",
+          "body": "This is a test todo."
+        }
+        """;
+
+    when(ctx.body()).thenReturn(newTodoJson);
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(newTodoJson, Todo.class,
+                        () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+
+    String exceptionMessage = exception.getErrors().get("REQUEST_BODY").get(0).toString();
+    assertTrue(exceptionMessage.contains("non-empty todo category"));
+  }
+
+  @Test
+  void addTodoWithoutBody() throws IOException {
+    String newTodoJson = """
+        {
+          "owner": "Test Todo",
+          "category": "General",
+          "status": true
+        }
+        """;
+
+    when(ctx.body()).thenReturn(newTodoJson);
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(newTodoJson, Todo.class,
+                        () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+
+    String exceptionMessage = exception.getErrors().get("REQUEST_BODY").get(0).toString();
+
+    assertTrue(exceptionMessage.contains("non-empty todo body"));
+  }
+
+  @Test
+  void addEmptyBodyTodo() throws IOException {
+    String newTodoJson = """
+        {
+          "owner": "Juan",
+          "status": true,
+          "category": "General",
+          "body": ""
+        }
+        """;
+
+    when(ctx.body()).thenReturn(newTodoJson);
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(newTodoJson, Todo.class,
+                        () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+
+    String exceptionMessage = exception.getErrors().get("REQUEST_BODY").get(0).toString();
+    assertTrue(exceptionMessage.contains("non-empty todo body"));
+  }
+
+  @Test
+  void addTodoWithNeitherCategoryNorOwner() throws IOException {
+    String newTodoJson = """
+        {
+          "owner": "",
+          "category": "",
+          "status": true,
+          "body": "This is a test todo."
+        }
+        """;
+
+    when(ctx.body()).thenReturn(newTodoJson);
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(newTodoJson, Todo.class,
+                        () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+
+    List<ValidationError<Object>> errors = exception.getErrors().get("REQUEST_BODY");
+
+    String nameExceptionMessage = errors.get(0).toString();
+    assertTrue(nameExceptionMessage.contains("non-empty todo owner"));
+
+    String categoryExceptionMessage = errors.get(1).toString();
+    assertTrue(categoryExceptionMessage.contains("non-empty todo category"));
+  }
 }
+

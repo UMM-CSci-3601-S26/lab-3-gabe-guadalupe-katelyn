@@ -13,7 +13,7 @@ import { TodoService } from 'src/app/todo/todo.service';
 @Injectable({
   providedIn: AppComponent
 })
-export class MockTodoService implements Pick<TodoService, 'getTodos' | 'filterTodos'> {
+export class MockTodoService implements Pick<TodoService, 'getTodos' | 'filterTodos' | 'addTodo'> {
   static testTodos: Todo[] = [
     {
       _id: "58af3a600343927e48e8720f",
@@ -47,5 +47,9 @@ export class MockTodoService implements Pick<TodoService, 'getTodos' | 'filterTo
     body?: string;
   }): Todo[] {
     return []
+  }
+
+  addTodo(newTodo: Partial<Todo>): Observable<string> {
+    return of('');
   }
 }
