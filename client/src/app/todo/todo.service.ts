@@ -42,6 +42,7 @@ export class TodoService {
     limit?: number;
     body?: string;
     status?: boolean;
+    sort? : string;
   }): Todo[] {
     let filteredTodos = todos;
 
@@ -59,6 +60,61 @@ export class TodoService {
     // Filter by limit
     if (filters.limit != null) {
       filteredTodos = filteredTodos.slice(0, filters.limit);
+    }
+
+    if (filters.sort) {
+      switch (filters.sort) {
+      case 'ownerAsc':
+        filteredTodos.sort((a, b) =>
+          a.owner.localeCompare(b.owner)
+        );
+        break;
+
+      case 'ownerDesc':
+        filteredTodos.sort((a, b) =>
+          b.owner.localeCompare(a.owner)
+        );
+        break;
+
+      case 'bodyAsc':
+        filteredTodos.sort((a, b) =>
+          a.body.localeCompare(b.body)
+        );
+        break;
+
+      case 'bodyDesc':
+        filteredTodos.sort((a, b) =>
+          b.body.localeCompare(a.body)
+        );
+        break;
+
+      case 'categoryAsc':
+        filteredTodos.sort((a, b) =>
+          a.category.localeCompare(b.category)
+        );
+        break;
+
+      case 'categoryDesc':
+        filteredTodos.sort((a, b) =>
+          b.category.localeCompare(a.category)
+        );
+        break;
+
+      case 'status':
+        filteredTodos.sort((a, b) => {
+          if (a.status === b.status) {
+            return 0;
+          }
+
+          if (a.status) {
+            return -1;
+          }
+
+          if (b.status) {
+            return 1;
+          }
+        });
+      }
     }
 
     return filteredTodos;

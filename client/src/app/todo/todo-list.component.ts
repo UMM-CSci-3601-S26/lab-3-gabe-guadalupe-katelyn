@@ -48,6 +48,7 @@ export class TodoComponent {
   todoOwner = signal<string | undefined>(undefined);
   todoBody = signal<string | undefined>(undefined);
   todoCategory = signal<string | undefined>(undefined);
+  todoSort = signal<string | undefined>(undefined);
   todoStatus = signal<boolean | undefined>(undefined);
 
   todoLimit = signal<number | undefined>(undefined);
@@ -90,6 +91,7 @@ export class TodoComponent {
     return this.todoService.filterTodos(serverFilteredTodos, {
       body: this.todoBody(),
       status: this.todoStatus(),
+      sort: this.todoSort(),
       limit: this.todoLimit()
     });
   });
@@ -106,5 +108,6 @@ export class TodoComponent {
     this.todoCategory.set(undefined);
     this.todoStatus.set(undefined);
     this.todoLimit.set(undefined);
+    this.todoSort.set(undefined);
   }
 }

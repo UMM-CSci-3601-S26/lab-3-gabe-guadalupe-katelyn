@@ -5,3 +5,11 @@ export interface Todo {
   body: string;
   category: string;
 }
+export type TodoSort =
+  | 'ownerAsc'
+  | 'ownerDesc'
+  | 'bodyAsc'
+  | 'bodyDesc'
+  | 'categoryAsc'
+  | 'categoryDesc'
+  | 'status';
