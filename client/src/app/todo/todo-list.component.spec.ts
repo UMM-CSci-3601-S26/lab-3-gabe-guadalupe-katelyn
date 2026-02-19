@@ -13,7 +13,7 @@ import { TodoComponent } from './todo-list.component';
 describe('Todo list', () => {
   let todoList: TodoComponent;
   let fixture: ComponentFixture<TodoComponent>;
-  // let todoService: TodoService;
+  let todoService: TodoService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -31,7 +31,7 @@ describe('Todo list', () => {
     TestBed.compileComponents().then(() => {
       fixture = TestBed.createComponent(TodoComponent);
       todoList = fixture.componentInstance;
-      // todoService = TestBed.inject(TodoService);
+      todoService = TestBed.inject(TodoService);
       fixture.detectChanges();
     });
   }));
@@ -49,81 +49,76 @@ describe('Todo list', () => {
     expect(Array.isArray(todos)).toBe(true);
   });
 
-  it('should apply limit client-side when todoLimit changes', waitForAsync(() => {
-    // Trigger serverFilteredTodos to load mock data
-    todoList.todoOwner.set(undefined);
+  it('should call getTodo() when todoCategory signal changes', () => {
+    const spy = spyOn(todoService, 'getTodos').and.callThrough();
+    todoList.todoCategory.set('homework');
     fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith({ category: 'homework', owner: undefined });
+  });
 
-    // Set client-side limit
-    todoList.todoLimit.set(2);
+  it('should call getTodo() when todoOwner signal changes', () => {
+    const spy = spyOn(todoService, 'getTodos').and.callThrough();
+    todoList.todoOwner.set('Fry');
     fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith({ category: undefined, owner: 'Fry' });
+  });
 
-    const limited = todoList.filteredTodos();
-    expect(limited.length).toBe(2);
-    expect(limited).toEqual(MockTodoService.testTodos.slice(0, 2));
+});
 
-    // Clear limit
-    todoList.todoLimit.set(undefined);
-    fixture.detectChanges();
-    const full = todoList.filteredTodos();
-    expect(full.length).toBe(MockTodoService.testTodos.length);
-  }));
+describe('Misbehaving Todo List', () => {
+  let todoList: TodoComponent;
+  let fixture: ComponentFixture<TodoComponent>;
 
-  describe('Misbehaving Todo List', () => {
-    let todoList: TodoComponent;
-    let fixture: ComponentFixture<TodoComponent>;
-
-    let todoServiceStub: {
+  let todoServiceStub: {
     getTodos: () => Observable<Todo[]>;
     filterTodos: () => Todo[];
   };
 
-    beforeEach(() => {
+  beforeEach(() => {
     // stub TodoService for test purposes
-      todoServiceStub = {
-        getTodos: () =>
-          new Observable((observer) => {
-            observer.error('getTodos() Observer generates an error');
-          }),
-        filterTodos: () => []
-      };
-    });
+    todoServiceStub = {
+      getTodos: () =>
+        new Observable((observer) => {
+          observer.error('getTodos() Observer generates an error');
+        }),
+      filterTodos: () => []
+    };
+  });
 
-    // Construct the `todoList` used for the testing in the `it` statement
-    // below.
-    beforeEach(waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [
-          TodoComponent
-        ],
-        // providers:    [ TodoService ]  // NO! Don't provide the real service!
-        // Provide a test-double instead
-        providers: [{
-          provide: TodoService,
-          useValue: todoServiceStub
-        }, provideRouter([])],
-      })
-        .compileComponents();
-    }));
+  // Construct the `todoList` used for the testing in the `it` statement
+  // below.
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        TodoComponent
+      ],
+      // providers:    [ TodoService ]  // NO! Don't provide the real service!
+      // Provide a test-double instead
+      providers: [{
+        provide: TodoService,
+        useValue: todoServiceStub
+      }, provideRouter([])],
+    })
+      .compileComponents();
+  }));
 
-    beforeEach(() => {
-      fixture = TestBed.createComponent(TodoComponent);
-      todoList = fixture.componentInstance;
-      fixture.detectChanges();
-    });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(TodoComponent);
+    todoList = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    it("generates an error if we don't set up a TodoListService", () => {
+  it("generates an error if we don't set up a TodoListService", () => {
     // If the service fails, we expect the `serverFilteredTodos` signal to
     // be an empty array of todos.
-      expect(todoList.serverFilteredTodos())
-        .withContext("service can't give values to the list if it's not there")
-        .toEqual([]);
-      // We also expect the `errMsg` signal to contain the "Problem contacting…"
-      // error message. (It's arguably a bit fragile to expect something specific
-      // like this; maybe we just want to expect it to be non-empty?)
-      expect(todoList.errMsg())
-        .withContext('the error message will be')
-        .toContain('Problem contacting the server – Error Code:');
-    });
+    expect(todoList.serverFilteredTodos())
+      .withContext("service can't give values to the list if it's not there")
+      .toEqual([]);
+    // We also expect the `errMsg` signal to contain the "Problem contacting…"
+    // error message. (It's arguably a bit fragile to expect something specific
+    // like this; maybe we just want to expect it to be non-empty?)
+    expect(todoList.errMsg())
+      .withContext('the error message will be')
+      .toContain('Problem contacting the server – Error Code:');
   });
-})
+});
