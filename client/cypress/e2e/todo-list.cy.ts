@@ -16,10 +16,8 @@ describe('Todo list', () => {
     page.getTodoTitle().should('have.text', 'Todos');
   });
 
-  it('Should show 300 todos in both card and list view', () => {
+  it('Should show 300 todos', () => {
     page.getTodoCards().should('have.length', 300);
-    page.changeView('list');
-    page.getTodoListItems().should('have.length', 300);
   });
 
   it('Should type something in the owner filter and check that it returned correct elements', () => {
@@ -37,7 +35,6 @@ describe('Todo list', () => {
     );
   });
 
-
   // it('Should type something partial in the body filter and check that it returned correct elements', () => {
   //   // Filter for bodies that contain 'Nisi si'
   //   cy.get('[data-test=todoBodyInput]').type('Nisi si');
@@ -50,21 +47,38 @@ describe('Todo list', () => {
   //   });
   // });
 
-  it('Should change the view', () => {
-    // Choose the view type "List"
-    page.changeView('list');
+  it('Should click complete filter and only show completed todos', () => {
 
-    // We should not see any cards
-    // There should be list items
-    page.getTodoCards().should('not.exist');
-    page.getTodoListItems().should('exist');
+    cy.get('[data-test=statusComplete]').click();
 
-    // Choose the view type "Card"
-    page.changeView('card');
+    page.getTodoCards().each(card => {
+      cy.wrap(card)
+        .find('.green-icon')
+        .should('exist');
+    });
 
-    // There should be cards
-    // We should not see any list items
-    page.getTodoCards().should('exist');
-    page.getTodoListItems().should('not.exist');
+  });
+
+  it('Should click incomplete filter and only show incomplete todos', () => {
+
+    cy.get('[data-test=statusIncomplete]').click();
+
+    page.getTodoCards().each(card => {
+      cy.wrap(card)
+        .find('.red-icon')
+        .should('exist');
+    });
+
+  });
+
+  it('Should show all todos when all filter selected', () => {
+
+    cy.get('[data-test=statusComplete]').click();
+    cy.get('[data-test=statusAll]').click();
+
+    page.getTodoCards()
+      .its('length')
+      .should('be.greaterThan', 0);
+
   });
 });

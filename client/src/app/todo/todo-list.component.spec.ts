@@ -41,21 +41,28 @@ describe('Todo list', () => {
   });
 
   it('should initialize with serverFilteredTodos available', () => {
+    todoList.todoOwner.set(undefined);
+    fixture.detectChanges();
+
     const todos = todoList.serverFilteredTodos();
     expect(todos).toBeDefined();
     expect(Array.isArray(todos)).toBe(true);
   });
 
-  it('should call getTodos() when todoLimit signal changes', () => {
+  it('should call getTodo() when todoCategory signal changes', () => {
     const spy = spyOn(todoService, 'getTodos').and.callThrough();
-    todoList.todoLimit.set(5);
+    todoList.todoCategory.set('homework');
     fixture.detectChanges();
-    expect(spy).toHaveBeenCalledWith({ limit: 5 });
+    expect(spy).toHaveBeenCalledWith({ category: 'homework', owner: undefined });
   });
 
-  it('should not show error message on successful load', () => {
-    expect(todoList.errMsg()).toBeUndefined();
+  it('should call getTodo() when todoOwner signal changes', () => {
+    const spy = spyOn(todoService, 'getTodos').and.callThrough();
+    todoList.todoOwner.set('Fry');
+    fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith({ category: undefined, owner: 'Fry' });
   });
+
 });
 
 describe('Misbehaving Todo List', () => {

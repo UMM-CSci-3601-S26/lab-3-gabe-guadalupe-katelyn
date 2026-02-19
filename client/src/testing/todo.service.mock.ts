@@ -37,9 +37,11 @@ export class MockTodoService implements Pick<TodoService, 'getTodos' | 'filterTo
       category: "video games"
     }
   ];
-  getTodos(_filters: { limit?: number }): Observable<Todo[]> {
+
+  getTodos(_filters: { owner?: string; category?: string; }): Observable<Todo[]> {
     return of(MockTodoService.testTodos);
   }
+
   filterTodos(todos: Todo[], filters: {
     owner?: string;
     body?: string;

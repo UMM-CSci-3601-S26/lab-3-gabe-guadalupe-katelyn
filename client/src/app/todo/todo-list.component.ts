@@ -17,10 +17,12 @@ import { Todo } from './todo';
 import { TodoCardComponent } from './todo-card.component';
 import { TodoService } from './todo.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @Component({
   selector: 'app-todo',
   imports: [
+    MatButtonToggleModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -45,21 +47,29 @@ export class TodoComponent {
 
   todoOwner = signal<string | undefined>(undefined);
   todoBody = signal<string | undefined>(undefined);
-  todoLimit = signal<number | undefined>(undefined);
+  todoCategory = signal<string | undefined>(undefined);
+  todoStatus = signal<boolean | undefined>(undefined);
 
+  todoLimit = signal<number | undefined>(undefined);
 
   errMsg = signal<string | undefined>(undefined);
 
-  viewType = signal<'card' | 'list'>('card');
-
-  private todoLimit$ = toObservable(this.todoLimit);
+  private todoOwner$ = toObservable(this.todoOwner);
+  private todoCategory$ = toObservable(this.todoCategory);
 
   serverFilteredTodos =
     toSignal(
-      combineLatest([this.todoLimit$]).pipe(
-        switchMap(([ limit ]) =>
-          this.todoService.getTodos({ limit })
+      combineLatest([
+        this.todoOwner$,
+        this.todoCategory$,
+      ]).pipe(
+        switchMap(([owner, category]) =>
+          this.todoService.getTodos({
+            owner,
+            category
+          })
         ),
+
         catchError((err) => {
           if (!(err.error instanceof ErrorEvent)) {
             this.errMsg.set(
@@ -67,11 +77,10 @@ export class TodoComponent {
             );
           }
           this.snackBar.open(this.errMsg(), 'OK', { duration: 6000 });
-          // `catchError` needs to return the same type. `of` makes an observable of the same type, and makes the array still empty
           return of<Todo[]>([]);
         }),
         tap(() => {
-
+          // empty
         })
       )
     );
@@ -79,8 +88,23 @@ export class TodoComponent {
   filteredTodos = computed(() => {
     const serverFilteredTodos = this.serverFilteredTodos();
     return this.todoService.filterTodos(serverFilteredTodos, {
-      owner: this.todoOwner(),
-      body: this.todoBody()
+      body: this.todoBody(),
+      status: this.todoStatus(),
+      limit: this.todoLimit()
     });
   });
+
+  setStatusFilter(value: 'all' | 'complete' | 'incomplete') {
+    if (value === 'complete') this.todoStatus.set(true);
+    else if (value === 'incomplete') this.todoStatus.set(false);
+    else this.todoStatus.set(undefined);
+  }
+
+  resetFilters() {
+    this.todoOwner.set(undefined);
+    this.todoBody.set(undefined);
+    this.todoCategory.set(undefined);
+    this.todoStatus.set(undefined);
+    this.todoLimit.set(undefined);
+  }
 }

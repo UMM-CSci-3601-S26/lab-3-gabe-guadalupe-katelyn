@@ -14,15 +14,22 @@ export class TodoService {
 
   readonly todoUrl: string = `${environment.apiUrl}todos`;
 
-  private readonly limitKey = 'limit';
+  private readonly ownerKey = 'owner';
+  private readonly catKey = 'category';
 
-  getTodos(filters?: { limit?: number;  }): Observable<Todo[]> {
+  getTodos(filters?: {
+    owner?: string;
+    category?: string;
+  }): Observable<Todo[]> {
 
     let httpParams: HttpParams = new HttpParams();
 
     if (filters) {
-      if (filters.limit) {
-        httpParams = httpParams.set(this.limitKey, filters.limit);
+      if (filters.owner) {
+        httpParams = httpParams.set(this.ownerKey, filters.owner);
+      }
+      if (filters.category) {
+        httpParams = httpParams.set(this.catKey, filters.category);
       }
     }
 
@@ -31,19 +38,27 @@ export class TodoService {
     });
   }
 
-  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; }): Todo[] { // skipcq: JS-0105
+  filterTodos(todos: Todo[], filters: {
+    limit?: number;
+    body?: string;
+    status?: boolean;
+  }): Todo[] {
     let filteredTodos = todos;
-
-    // Filter by owner
-    if (filters.owner) {
-      filters.owner = filters.owner.toLowerCase();
-      filteredTodos = filteredTodos.filter(todo => todo.owner.toLowerCase().indexOf(filters.owner) !== -1);
-    }
 
     // Filter by body
     if (filters.body) {
       filters.body = filters.body.toLowerCase();
       filteredTodos = filteredTodos.filter(todo => todo.body.toLowerCase().indexOf(filters.body) !== -1);
+    }
+
+    // Filter by status
+    if (filters.status !== undefined) {
+      filteredTodos = filteredTodos.filter(todo => todo.status === filters.status);
+    }
+
+    // Filter by limit
+    if (filters.limit != null) {
+      filteredTodos = filteredTodos.slice(0, filters.limit);
     }
 
     return filteredTodos;
