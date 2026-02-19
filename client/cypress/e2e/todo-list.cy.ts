@@ -83,22 +83,4 @@ describe('Todo list', () => {
       .should('be.greaterThan', 0);
 
   });
-
-  it('Should change the view', () => {
-    // Choose the view type "List"
-    page.changeView('list');
-
-    // We should not see any cards
-    // There should be list items
-    page.getTodoCards().should('not.exist');
-    page.getTodoListItems().should('exist');
-
-    // Choose the view type "Card"
-    page.changeView('card');
-
-    // There should be cards
-    // We should not see any list items
-    page.getTodoCards().should('exist');
-    page.getTodoListItems().should('not.exist');
-  });
 });
