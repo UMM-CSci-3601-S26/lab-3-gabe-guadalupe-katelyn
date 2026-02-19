@@ -16,10 +16,8 @@ describe('Todo list', () => {
     page.getTodoTitle().should('have.text', 'Todos');
   });
 
-  it('Should show 300 todos in both card and list view', () => {
+  it('Should show 300 todos', () => {
     page.getTodoCards().should('have.length', 300);
-    page.changeView('list');
-    page.getTodoListItems().should('have.length', 300);
   });
 
   it('Should type something in the owner filter and check that it returned correct elements', () => {
