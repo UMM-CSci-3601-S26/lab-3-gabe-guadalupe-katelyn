@@ -54,16 +54,22 @@ export class TodoComponent {
 
   errMsg = signal<string | undefined>(undefined);
 
-  viewType = signal<'card' | 'list'>('card');
-
-  private todoLimit$ = toObservable(this.todoLimit);
+  private todoOwner$ = toObservable(this.todoOwner);
+  private todoCategory$ = toObservable(this.todoCategory);
 
   serverFilteredTodos =
     toSignal(
-      combineLatest([this.todoLimit$]).pipe(
-        switchMap(([ limit ]) =>
-          this.todoService.getTodos({ limit })
+      combineLatest([
+        this.todoOwner$,
+        this.todoCategory$,
+      ]).pipe(
+        switchMap(([owner, category]) =>
+          this.todoService.getTodos({
+            owner,
+            category
+          })
         ),
+
         catchError((err) => {
           if (!(err.error instanceof ErrorEvent)) {
             this.errMsg.set(
@@ -71,11 +77,10 @@ export class TodoComponent {
             );
           }
           this.snackBar.open(this.errMsg(), 'OK', { duration: 6000 });
-          // `catchError` needs to return the same type. `of` makes an observable of the same type, and makes the array still empty
           return of<Todo[]>([]);
         }),
         tap(() => {
-
+          // empty
         })
       )
     );
@@ -83,10 +88,9 @@ export class TodoComponent {
   filteredTodos = computed(() => {
     const serverFilteredTodos = this.serverFilteredTodos();
     return this.todoService.filterTodos(serverFilteredTodos, {
-      owner: this.todoOwner(),
       body: this.todoBody(),
-      category: this.todoCategory(),
-      status: this.todoStatus()
+      status: this.todoStatus(),
+      limit: this.todoLimit()
     });
   });
 
@@ -95,5 +99,12 @@ export class TodoComponent {
     else if (value === 'incomplete') this.todoStatus.set(false);
     else this.todoStatus.set(undefined);
   }
-}
 
+  resetFilters() {
+    this.todoOwner.set(undefined);
+    this.todoBody.set(undefined);
+    this.todoCategory.set(undefined);
+    this.todoStatus.set(undefined);
+    this.todoLimit.set(undefined);
+  }
+}

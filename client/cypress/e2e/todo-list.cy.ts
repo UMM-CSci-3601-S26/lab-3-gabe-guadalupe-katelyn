@@ -16,10 +16,8 @@ describe('Todo list', () => {
     page.getTodoTitle().should('have.text', 'Todos');
   });
 
-  it('Should show 300 todos in both card and list view', () => {
+  it('Should show 300 todos', () => {
     page.getTodoCards().should('have.length', 300);
-    page.changeView('list');
-    page.getTodoListItems().should('have.length', 300);
   });
 
   it('Should type something in the owner filter and check that it returned correct elements', () => {
@@ -82,23 +80,5 @@ describe('Todo list', () => {
       .its('length')
       .should('be.greaterThan', 0);
 
-  });
-
-  it('Should change the view', () => {
-    // Choose the view type "List"
-    page.changeView('list');
-
-    // We should not see any cards
-    // There should be list items
-    page.getTodoCards().should('not.exist');
-    page.getTodoListItems().should('exist');
-
-    // Choose the view type "Card"
-    page.changeView('card');
-
-    // There should be cards
-    // We should not see any list items
-    page.getTodoCards().should('exist');
-    page.getTodoListItems().should('not.exist');
   });
 });
