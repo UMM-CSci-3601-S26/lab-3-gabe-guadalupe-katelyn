@@ -206,11 +206,11 @@ public class TodoController implements Controller {
     String body = ctx.body();
     Todo newTodo = ctx.bodyValidator(Todo.class)
       .check(td -> td.owner != null && td.owner.length() > 0,
-        "Todo must have a non-empty owner name; body was " + body)
+        "Todo must have a non-empty todo owner; owner was " + body)
       .check(td -> td.body != null && td.body.length() > 0,
-        "Todo must have a non-empty body name; body was " + body)
+        "Todo must have a non-empty todo body; body was " + body)
       .check(td -> td.category != null && td.category.length() > 0,
-        "Todo must have a non-empty category name; body was " + body)
+        "Todo must have a non-empty todo category; category was " + body)
       .get();
 
     todoCollection.insertOne(newTodo);
