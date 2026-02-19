@@ -7,7 +7,7 @@ import static com.mongodb.client.model.Filters.regex;
 
 import java.util.ArrayList;
 import java.util.List;
-// import java.util.Map;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -202,23 +202,22 @@ public class TodoController implements Controller {
     }
   }
 
-  // public void addNewTodo(Context ctx) {
-  //   String body = ctx.body();
-  //   Todo newTodo = ctx.bodyValidator(Todo.class)
-  //     .check(td -> td.owner != null && td.owner.length() > 0,
-  //       "Todo must have a non-empty owner name; body was " + body)
-  //     .check(td -> td.body != null && td.body.length() > 0,
-  //       "Todo must have a non-empty body name; body was " + body)
-  //     .check(td -> td.category != null && td.category.length() > 0,
-  //       "Todo must have a non-empty category name; body was " + body)
-  //     .check(td -> td.status, "Todo must have a status.")
-  //     .get();
+  public void addNewTodo(Context ctx) {
+    String body = ctx.body();
+    Todo newTodo = ctx.bodyValidator(Todo.class)
+      .check(td -> td.owner != null && td.owner.length() > 0,
+        "Todo must have a non-empty owner name; body was " + body)
+      .check(td -> td.body != null && td.body.length() > 0,
+        "Todo must have a non-empty body name; body was " + body)
+      .check(td -> td.category != null && td.category.length() > 0,
+        "Todo must have a non-empty category name; body was " + body)
+      .get();
 
-  //   todoCollection.insertOne(newTodo);
+    todoCollection.insertOne(newTodo);
 
-  //   ctx.json(Map.of("id", newTodo._id));
-  //   ctx.status(HttpStatus.CREATED);
-  // }
+    ctx.json(Map.of("id", newTodo._id));
+    ctx.status(HttpStatus.CREATED);
+  }
 
 
   // public void deleteTodo(Context ctx) {
@@ -242,7 +241,7 @@ public class TodoController implements Controller {
 
     server.get(API_TODO, this::getTodos);
 
-    // server.post(API_TODO, this::addNewTodo);
+    server.post(API_TODO, this::addNewTodo);
 
     // server.delete(API_TODO_BY_ID, this::deleteTodo);
   }
