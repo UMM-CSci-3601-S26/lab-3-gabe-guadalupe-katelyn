@@ -125,4 +125,12 @@ describe('Todo list', () => {
       cy.wrap(e).find('.todo-card-category').should('contain', 'video games');
     });
   });
+
+  it('Should type a number in the limit filter and check that it returned the correct number of todos', () => {
+    cy.get('[data-test=todoLimitInput]').type('10');
+    page.getTodoCards().should('have.length', 10);
+
+    cy.get('[data-test=todoLimitInput]').clear().type('50');
+    page.getTodoCards().should('have.length', 50);
+  });
 });
