@@ -63,6 +63,49 @@ describe('Todo list', () => {
     expect(spy).toHaveBeenCalledWith({ category: undefined, owner: 'Fry' });
   });
 
+  it('should set todoStatus to true when value is complete', () => {
+    const spy = spyOn(todoList.todoStatus, 'set').and.callThrough();
+    todoList.setStatusFilter('complete');
+    fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith( true );
+  });
+
+  it('should set todoStatus to false when value is incomplete', () => {
+    const spy = spyOn(todoList.todoStatus, 'set').and.callThrough();
+    todoList.setStatusFilter('incomplete');
+    fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith( false );
+  });
+
+  it('should set todoStatus to undefined when value is all', () => {
+    const spy = spyOn(todoList.todoStatus, 'set').and.callThrough();
+    todoList.setStatusFilter('all');
+    fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith( undefined );
+  });
+
+  it('should set all filters to undefined when the reset button is clicked', () => {
+    todoList.todoCategory.set('homework');
+    todoList.todoOwner.set('Fry');
+    todoList.todoStatus.set(true);
+    todoList.todoBody.set('Nisi');
+    todoList.todoLimit.set(5);
+
+    expect(todoList.todoCategory()).toBe('homework');
+    expect(todoList.todoOwner()).toBe('Fry');
+    expect(todoList.todoStatus()).toBe(true);
+    expect(todoList.todoBody()).toBe('Nisi');
+    expect(todoList.todoLimit()).toBe(5);
+
+    todoList.resetFilters();
+
+    expect(todoList.todoCategory()).toBeUndefined();
+    expect(todoList.todoOwner()).toBeUndefined();
+    expect(todoList.todoStatus()).toBeUndefined();
+    expect(todoList.todoBody()).toBeUndefined();
+    expect(todoList.todoLimit()).toBeUndefined();
+  });
+
 });
 
 describe('Misbehaving Todo List', () => {
