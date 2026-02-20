@@ -21,7 +21,7 @@
           <!-- Category Input Filter (server side) -->
           <mat-form-field class="input-field">
             <mat-label>Category</mat-label>
-            <mat-select
+            <mat-select matInput data-test="todoCategoryInput"
               [ngModel]="todoCategory()"
               (ngModelChange)="todoCategory.set($event)">
               <mat-option [value]="undefined">--</mat-option>

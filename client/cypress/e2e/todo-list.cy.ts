@@ -81,4 +81,48 @@ describe('Todo list', () => {
       .should('be.greaterThan', 0);
 
   });
+
+  it('Should select a category groceries, and check that it returned correct todos', () => {
+    // Filter for category 'groceries';
+    cy.get('[data-test=todoCategoryInput]').click();
+    cy.get('mat-option').contains('Groceries').click();
+
+    // All of the todos that show should have the category we are looking for
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-category').should('contain', 'groceries');
+    });
+  });
+
+  it('Should select a category homework, and check that it returned correct todos', () => {
+    // Filter for category 'homework';
+    cy.get('[data-test=todoCategoryInput]').click();
+    cy.get('mat-option').contains('Homework').click();
+
+    // All of the todos that show should have the category we are looking for
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-category').should('contain', 'homework');
+    });
+  });
+
+  it('Should select a category software design, and check that it returned correct todos', () => {
+    // Filter for category 'software design';
+    cy.get('[data-test=todoCategoryInput]').click();
+    cy.get('mat-option').contains('Software Design').click();
+
+    // All of the todos that show should have the category we are looking for
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-category').should('contain', 'software design');
+    });
+  });
+
+  it('Should select a category video games, and check that it returned correct todos', () => {
+    // Filter for category 'video games';
+    cy.get('[data-test=todoCategoryInput]').click();
+    cy.get('mat-option').contains('Video Games').click();
+
+    // All of the todos that show should have the category we are looking for
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-category').should('contain', 'video games');
+    });
+  });
 });
