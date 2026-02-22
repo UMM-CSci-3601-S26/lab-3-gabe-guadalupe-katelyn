@@ -35,17 +35,17 @@ describe('Todo list', () => {
     );
   });
 
-  // it('Should type something partial in the body filter and check that it returned correct elements', () => {
-  //   // Filter for bodies that contain 'Nisi si'
-  //   cy.get('[data-test=todoBodyInput]').type('Nisi si');
+  it('Should type something partial in the body filter and check that it returned correct elements', () => {
+    // Filter for bodies that contain 'nisi si'
+    cy.get('[data-test=todoBodyInput]').type('nisi si', { force: true });
 
-  //   page.getTodoCards().should('have.lengthOf', 3);
+    page.getTodoCards().should('have.lengthOf', 3);
 
-  //   // Each todo card's body should include the text we are filtering by
-  //   page.getTodoCards().each(e => {
-  //     cy.wrap(e).find('.todo-card-body').should('include.text', 'NISI SI');
-  //   });
-  // });
+    // Each todo card's body should include the text we are filtering by
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-body').invoke('text').should('match', /nisi si/i);
+    });
+  });
 
   it('Should click complete filter and only show completed todos', () => {
 
