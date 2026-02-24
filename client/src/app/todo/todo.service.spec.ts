@@ -108,4 +108,51 @@ describe('TodoService', () => {
       );
     });
   }));
+
+  it('sorts todos by owner ascending', () => {
+    const result = todoService.filterTodos(testTodos, { sort: 'ownerAsc' });
+    const owners = result.map(todo => todo.owner);
+    expect(owners).toEqual(['Barry', 'Blanche', 'Fry']);
+  });
+
+  it('sorts todos by owner descending', () => {
+    const result = todoService.filterTodos(testTodos, { sort: 'ownerDesc' });
+    const owners = result.map(todo => todo.owner);
+    expect(owners).toEqual(['Fry', 'Blanche', 'Barry']);
+  });
+
+  it('sorts todos by body ascending', () => {
+    const result = todoService.filterTodos(testTodos, { sort: 'bodyAsc' });
+    const bodies = result.map(todo => todo.body);
+
+    const expected = [...bodies].sort((a, b) => a.localeCompare(b));
+    expect(bodies).toEqual(expected);
+  });
+
+  it('sorts todos by body descending', () => {
+    const result = todoService.filterTodos(testTodos, { sort: 'bodyDesc' });
+    const bodies = result.map(todo => todo.body);
+
+    const expected = [...bodies].sort((a, b) => b.localeCompare(a));
+    expect(bodies).toEqual(expected);
+  });
+
+  it('sorts todos by category ascending', () => {
+    const result = todoService.filterTodos(testTodos, { sort: 'categoryAsc' });
+    const categories = result.map(todo => todo.category);
+    expect(categories).toEqual(['homework', 'software design', 'video games']);
+  });
+
+  it('sorts todos by category descending', () => {
+    const result = todoService.filterTodos(testTodos, { sort: 'categoryDesc' });
+    const categories = result.map(todo => todo.category);
+    expect(categories).toEqual(['video games', 'software design', 'homework']);
+  });
+
+  it('sorts todos by status (complete first)', () => {
+    const result = todoService.filterTodos(testTodos, { sort: 'status' });
+    const statuses = result.map(todo => todo.status);
+    expect(statuses).toEqual([true, false, false]);
+  });
+
 });
