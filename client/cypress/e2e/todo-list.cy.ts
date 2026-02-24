@@ -35,17 +35,17 @@ describe('Todo list', () => {
     );
   });
 
-  // it('Should type something partial in the body filter and check that it returned correct elements', () => {
-  //   // Filter for bodies that contain 'Nisi si'
-  //   cy.get('[data-test=todoBodyInput]').type('Nisi si');
+  it('Should type something partial in the body filter and check that it returned correct elements', () => {
+    // Filter for bodies that contain 'nisi si'
+    cy.get('[data-test=todoBodyInput]').type('nisi si', { force: true });
 
-  //   page.getTodoCards().should('have.lengthOf', 3);
+    page.getTodoCards().should('have.lengthOf', 3);
 
-  //   // Each todo card's body should include the text we are filtering by
-  //   page.getTodoCards().each(e => {
-  //     cy.wrap(e).find('.todo-card-body').should('include.text', 'NISI SI');
-  //   });
-  // });
+    // Each todo card's body should include the text we are filtering by
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-body').invoke('text').should('match', /nisi si/i);
+    });
+  });
 
   it('Should click complete filter and only show completed todos', () => {
 
@@ -80,5 +80,57 @@ describe('Todo list', () => {
       .its('length')
       .should('be.greaterThan', 0);
 
+  });
+
+  it('Should select a category groceries, and check that it returned correct todos', () => {
+    // Filter for category 'groceries';
+    cy.get('[data-test=todoCategoryInput]').click();
+    cy.get('mat-option').contains('Groceries').click();
+
+    // All of the todos that show should have the category we are looking for
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-category').should('contain', 'groceries');
+    });
+  });
+
+  it('Should select a category homework, and check that it returned correct todos', () => {
+    // Filter for category 'homework';
+    cy.get('[data-test=todoCategoryInput]').click();
+    cy.get('mat-option').contains('Homework').click();
+
+    // All of the todos that show should have the category we are looking for
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-category').should('contain', 'homework');
+    });
+  });
+
+  it('Should select a category software design, and check that it returned correct todos', () => {
+    // Filter for category 'software design';
+    cy.get('[data-test=todoCategoryInput]').click();
+    cy.get('mat-option').contains('Software Design').click();
+
+    // All of the todos that show should have the category we are looking for
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-category').should('contain', 'software design');
+    });
+  });
+
+  it('Should select a category video games, and check that it returned correct todos', () => {
+    // Filter for category 'video games';
+    cy.get('[data-test=todoCategoryInput]').click();
+    cy.get('mat-option').contains('Video Games').click();
+
+    // All of the todos that show should have the category we are looking for
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-category').should('contain', 'video games');
+    });
+  });
+
+  it('Should type a number in the limit filter and check that it returned the correct number of todos', () => {
+    cy.get('[data-test=todoLimitInput]').type('10');
+    page.getTodoCards().should('have.length', 10);
+
+    cy.get('[data-test=todoLimitInput]').clear().type('50');
+    page.getTodoCards().should('have.length', 50);
   });
 });
