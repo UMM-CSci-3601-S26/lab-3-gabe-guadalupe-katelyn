@@ -22,25 +22,31 @@
               <mat-label>Category</mat-label>
               <input matInput formControlName="category"
                 required>
+              @if (formControlHasError('category')) {
+                <mat-error data-test="categoryError">
+                  {{getErrorMessage('category')}}
+                </mat-error>
+              }
             </mat-form-field>
 
             <mat-form-field>
               <mat-label>Status</mat-label>
               <mat-select required formControlName="status">
-                <mat-option value="true">Complete</mat-option>
-                <mat-option value="false">Incomplete</mat-option>
+                <mat-option [value]="null">--</mat-option>
+                <mat-option [value]="true">Complete</mat-option>
+                <mat-option [value]="false">Incomplete</mat-option>
               </mat-select>
+              @if (formControlHasError('status')) {
+                <mat-error data-test="statusError">
+                  {{getErrorMessage('status')}}
+                </mat-error>
+              }
             </mat-form-field>
 
             <mat-form-field>
               <mat-label>Body</mat-label>
-              <input matInput formControlName="body"
-                required>
-              @if (formControlHasError('body')) {
-                <mat-error data-test="bodyError">
-                  {{getErrorMessage('body')}}
-                </mat-error>
-              }
+              <input matInput formControlName="body">
+              <mat-hint>Not required in Angular for validation, still required by server for error testing</mat-hint>
             </mat-form-field>
           </div>
 

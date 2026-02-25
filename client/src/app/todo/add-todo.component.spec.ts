@@ -138,26 +138,6 @@ describe('AddTodoComponent', () => {
     });
   });
 
-  describe('The body field', () => {
-    let bodyControl: AbstractControl;
-
-    beforeEach(() => {
-      bodyControl = addTodoComponent.addTodoForm.controls.body;
-    });
-
-    it('should not allow empty values', () => {
-      bodyControl.setValue('');
-      expect(bodyControl.valid).toBeFalsy();
-      expect(bodyControl.hasError('required')).toBeTruthy();
-    });
-
-    it('should fail on really long bodies', () => {
-      bodyControl.setValue('x'.repeat(500));
-      expect(bodyControl.valid).toBeFalsy();
-      expect(bodyControl.hasError('maxlength')).toBeTruthy();
-    });
-  });
-
   describe('getErrorMessage()', () => {
     it('should return the correct error message', () => {
       let controlName: keyof typeof addTodoComponent.addTodoValidationMessages = 'owner';
@@ -167,10 +147,6 @@ describe('AddTodoComponent', () => {
       controlName = 'category';
       addTodoComponent.addTodoForm.get(controlName).setErrors({'required': true});
       expect(addTodoComponent.getErrorMessage(controlName)).toEqual('Category is required');
-
-      controlName = 'body';
-      addTodoComponent.addTodoForm.get(controlName).setErrors({'required': true});
-      expect(addTodoComponent.getErrorMessage(controlName)).toEqual('Body is required');
     });
 
     it('should return "Unknown error" if no error message is found', () => {
