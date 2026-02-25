@@ -133,4 +133,28 @@ describe('Todo list', () => {
     cy.get('[data-test=todoLimitInput]').clear().type('50');
     page.getTodoCards().should('have.length', 50);
   });
+
+  it('Should select a sort by option, and check that it sorted the todos correctly', () => {
+    const pageCategories: string[] = [];
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-category').invoke('text').then((text) => {
+        pageCategories.push(text);
+      });
+    });
+
+    pageCategories.sort();
+
+    const ourPageCategories: string[] = [];
+    // Filter for sortyby 'Category ascending';
+    cy.get('[data-test=sortSelect]').click();
+    cy.get('mat-option').contains('Category (A–Z)').click();
+
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-category').invoke('text').then((text) => {
+        ourPageCategories.push(text);
+      });
+    })
+
+    expect(pageCategories).to.deep.equal(ourPageCategories);
+  });
 });

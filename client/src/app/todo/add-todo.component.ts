@@ -35,14 +35,11 @@ export class AddTodoComponent {
       Validators.maxLength(50),
     ])),
 
-    status: new FormControl<boolean>(false, Validators.compose([
+    status: new FormControl<boolean>(null, Validators.compose([
       Validators.required,
     ])),
 
-    body: new FormControl('', Validators.compose([
-      Validators.required,
-      Validators.maxLength(300),
-    ])),
+    body: new FormControl(''),
   });
 
   readonly addTodoValidationMessages = {
@@ -61,11 +58,6 @@ export class AddTodoComponent {
     status: [
       {type: 'required', message: 'Status is required'}
     ],
-
-    body: [
-      { type: 'required', message: 'Body is required' },
-      { type: 'maxlength', message: 'Body must be at most 300 characters long' },
-    ]
   };
 
   formControlHasError(controlName: string): boolean {

@@ -155,4 +155,47 @@ describe('TodoService', () => {
     expect(statuses).toEqual([true, false, false]);
   });
 
+  it('correctly calls api/todos with multiple filter parameters', () => {
+    const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
+
+    todoService.getTodos({ owner: 'Barry', category: 'video games' }).subscribe(() => {
+
+      // This gets the arguments for the first (and in this case only) call to the `mockMethod`.
+      const [url, options] = mockedMethod.calls.argsFor(0);
+      // Gets the `HttpParams` from the options part of the call.
+      // `options.param` can return any of a broad number of types;
+      // it is in fact an instance of `HttpParams`, and I need to use
+      // that fact, so I'm casting it (the `as HttpParams` bit).
+      const calledHttpParams: HttpParams = (options.params) as HttpParams;
+      expect(mockedMethod)
+        .withContext('one call')
+        .toHaveBeenCalledTimes(1);
+      expect(url)
+        .withContext('talks to the correct endpoint')
+        .toEqual(todoService.todoUrl);
+      expect(calledHttpParams.keys().length)
+        .withContext('should have 2 params')
+        .toEqual(2);
+      expect(calledHttpParams.get('owner'))
+        .withContext('owner of Barry')
+        .toEqual('Barry');
+      expect(calledHttpParams.get('category'))
+        .withContext('category being video games')
+        .toEqual('video games');
+    });
+  });
+
+  it('filters by status and limit', () => {
+    const todoStatus = false;
+    const todoLimit = 1;
+    const filters = { status: todoStatus, limit: todoLimit };
+    const filteredTodos = todoService.filterTodos(testTodos, filters);
+    // There should be 2 todos with these properties be we limited to 1.
+    expect(filteredTodos.length).toBe(1);
+    // Every returned todo should be incomplete.
+    filteredTodos.forEach(todo => {
+      expect(todo.status).toBe(todoStatus);
+    });
+  });
+
 });
